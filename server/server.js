@@ -35,6 +35,10 @@ app.use("/api/donors", donorRoutes);
 app.use("/api/role-requests", roleRequestRoutes);
 
 app.use(require("./middleware/errorHandler"));
-
+app.get("/",(req,res)=>{
+    res.json({
+        data:"server working"
+    });
+});
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
