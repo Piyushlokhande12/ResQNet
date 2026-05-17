@@ -1,0 +1,94 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --primary: #e53e3e;
+  --primary-dark: #c53030;
+  --primary-light: #feb2b2;
+  --bg: #0f1117;
+  --bg-card: #1a1d2e;
+  --bg-surface: #252840;
+  --text: #f0f0f5;
+  --text-muted: #8b8fa8;
+  --border: #2d3150;
+  --success: #38a169;
+  --warning: #d69e2e;
+  --info: #3182ce;
+  --radius: 12px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.4);
+}
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* Utility classes */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+.btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+
+.btn-outline {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.badge-pending   { background: rgba(214,158,46,0.15); color: var(--warning); }
+.badge-accepted  { background: rgba(49,130,206,0.15); color: var(--info); }
+.badge-resolved  { background: rgba(56,161,105,0.15); color: var(--success); }
+.badge-fake      { background: rgba(229,62,62,0.15);  color: var(--primary); }
+.badge-on_the_way{ background: rgba(49,130,206,0.25); color: var(--info); }
+
+input, select, textarea {
+  width: 100%;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  padding: 10px 14px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+input:focus, select:focus, textarea:focus { border-color: var(--primary); }
+textarea { resize: vertical; min-height: 80px; }
+label { display: block; margin-bottom: 6px; font-size: 13px; color: var(--text-muted); }
+
+.form-group { margin-bottom: 16px; }
