@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const responderSchema = new mongoose.Schema(
   {
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-
     responderType: {
       type: String,
       enum: ["police", "ambulance", "fire", "medical"],

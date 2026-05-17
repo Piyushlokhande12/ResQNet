@@ -22,7 +22,7 @@ export default function ProfilePage() {
 
   const [newCondition, setNewCondition] = useState("");
   const [newAllergy, setNewAllergy] = useState("");
-  const [newContact, setNewContact] = useState({ name: "", phone: "", relation: "" });
+  const [newContact, setNewContact] = useState({ name: "", email: "", relation: "" });
 
   useEffect(() => {
     if (user) {
@@ -48,12 +48,12 @@ export default function ProfilePage() {
   };
 
   const addContact = () => {
-    if (!newContact.name || !newContact.phone) {
-      toast.error("Name and phone are required");
+    if (!newContact.name || !newContact.email) {
+      toast.error("Name and email are required");
       return;
     }
     setForm((f) => ({ ...f, emergencyContacts: [...f.emergencyContacts, { ...newContact }] }));
-    setNewContact({ name: "", phone: "", relation: "" });
+    setNewContact({ name: "", email: "", relation: "" });
   };
 
   const removeContact = (i) => {
@@ -196,7 +196,9 @@ export default function ProfilePage() {
           }}>
             <div>
               <div style={{ fontWeight: 600, fontSize: 14 }}>{c.name}</div>
-              <div style={{ fontSize: 12, color: "var(--text-muted)" }}>{c.phone}{c.relation ? " · " + c.relation : ""}</div>
+              <div style={{ fontSize: 12, color: "var(--text-muted)" }}>
+                {c.email}{c.relation ? " · " + c.relation : ""}
+              </div>
             </div>
             <button onClick={() => removeContact(i)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--primary)" }}>
               <Trash2 size={16} />
@@ -211,8 +213,13 @@ export default function ProfilePage() {
             <input placeholder="Contact name" value={newContact.name} onChange={(e) => setNewContact({ ...newContact, name: e.target.value })} />
           </div>
           <div className="form-group" style={{ marginBottom: 0 }}>
-            <label>Phone</label>
-            <input placeholder="+91..." value={newContact.phone} onChange={(e) => setNewContact({ ...newContact, phone: e.target.value })} />
+            <label>Email</label>
+            <input
+              type="email"
+              placeholder="contact@gmail.com"
+              value={newContact.email}
+              onChange={(e) => setNewContact({ ...newContact, email: e.target.value })}
+            />
           </div>
           <div className="form-group" style={{ marginBottom: 0 }}>
             <label>Relation</label>

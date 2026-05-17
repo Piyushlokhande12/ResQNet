@@ -6,7 +6,7 @@ const emergencyContactSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  phone: {
+  email: {
     type: String,
     required: true,
   },
@@ -39,7 +39,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       minlength: 6,
-      select: false
+      select: false,
     },
 
     role: {
@@ -48,7 +48,6 @@ const userSchema = new mongoose.Schema(
       default: "user",
     },
 
-    // Profile details
     bloodGroup: {
       type: String,
       enum: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
@@ -66,10 +65,8 @@ const userSchema = new mongoose.Schema(
 
     emergencyContacts: [emergencyContactSchema],
 
-    // Push notification token
     fcmToken: String,
 
-    // Account status
     isVerified: {
       type: Boolean,
       default: false,
@@ -95,20 +92,14 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-
-// Hash password before saving
 userSchema.pre("save", async function () {
   if (!this.isModified("password")) return;
-
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
 
-
-// Compare password
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return bcrypt.compare(enteredPassword, this.password);
 };
-
 
 module.exports = mongoose.model("User", userSchema);

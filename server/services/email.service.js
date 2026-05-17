@@ -10,8 +10,8 @@ const transporter = nodemailer.createTransport({
 
 transporter.verify((error) => {
   if (error) {
-    console.error(" Email transporter error:", error.message);
-  } else {}
+    console.error("Email transporter error:", error.message);
+  }
 });
 
 const sendEmail = async ({ to, subject, html }) => {
@@ -54,6 +54,16 @@ const sendSOSEmail = async (contact, userName, location, emergencyType) => {
   });
 };
 
+// ← This was missing — caused crash in incident controller
+const sendSOSEmailToAll = async (contacts, userName, location, emergencyType) => {
+  const promises = contacts.map((contact) =>
+    sendSOSEmail(contact, userName, location, emergencyType).catch((err) =>
+      console.error(`Failed to send SOS email to ${contact.email}:`, err.message)
+    )
+  );
+  await Promise.all(promises);
+};
+
 const sendOTPEmail = async (email, otp) => {
   await sendEmail({
     to: email,
@@ -70,4 +80,4 @@ const sendOTPEmail = async (email, otp) => {
   });
 };
 
-module.exports = { sendEmail, sendSOSEmail, sendOTPEmail };
+module.exports = { sendEmail, sendSOSEmail, sendSOSEmailToAll, sendOTPEmail };

@@ -27,7 +27,6 @@ const incidentSchema = new mongoose.Schema(
         "fire",
         "crime",
         "women_safety",
-        "natural_disaster",
         "other",
       ],
       required: true,
