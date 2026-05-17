@@ -39,12 +39,10 @@ export default function IncidentDetailPage() {
   const [responderLoc, setResponderLoc] = useState(null);
   const [updatingStatus, setUpdatingStatus] = useState(false);
 
-  // Fetch incident on mount and when id changes
   useEffect(() => {
     fetchIncident();
   }, [id]);
 
-  // Socket.io — join room and listen for real-time updates
   useEffect(() => {
     if (!socket || !id) return;
 
@@ -97,22 +95,31 @@ export default function IncidentDetailPage() {
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+
+    // Reset input so same file can be re-selected if needed
+    e.target.value = "";
+
+    console.log("Uploading file:", file.name, file.type, file.size);
+
     setUploading(true);
     const formData = new FormData();
     formData.append("file", file);
+
     try {
-      await api.post("/incidents/" + id + "/evidence", formData, {
+      const { data } = await api.post("/incidents/" + id + "/evidence", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       toast.success("Evidence uploaded successfully!");
-      fetchIncident();
-    } catch {
-      toast.error("Upload failed. Try again.");
+      // Update incident media directly from response instead of refetching
+      setIncident((prev) => ({ ...prev, media: data.media }));
+    } catch (err) {
+      console.error("Upload error:", err);
+      const msg = err.response?.data?.message || "Upload failed. Try again.";
+      toast.error(msg);
     }
     setUploading(false);
   };
 
-  // ── Loading state ──────────────────────────────────────────────────────────
   if (loading) {
     return (
       <div style={{
@@ -144,7 +151,6 @@ export default function IncidentDetailPage() {
   return (
     <div style={{ padding: 28 }}>
 
-      {/* ── Back button ── */}
       <button
         onClick={() => navigate(-1)}
         className="btn btn-outline"
@@ -153,7 +159,6 @@ export default function IncidentDetailPage() {
         <ArrowLeft size={14} /> Back
       </button>
 
-      {/* ── Header ── */}
       <div style={{
         display: "flex", alignItems: "flex-start",
         justifyContent: "space-between", marginBottom: 24,
@@ -180,14 +185,8 @@ export default function IncidentDetailPage() {
           </div>
         </div>
 
-        {/* Status badge */}
-        <div style={{
-          display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6,
-        }}>
-          <span
-            className={"badge badge-" + incident.status}
-            style={{ fontSize: 14, padding: "7px 18px" }}
-          >
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6 }}>
+          <span className={"badge badge-" + incident.status} style={{ fontSize: 14, padding: "7px 18px" }}>
             {incident.status.replace(/_/g, " ")}
           </span>
           <span style={{ fontSize: 11, color: "var(--text-muted)" }}>
@@ -196,13 +195,11 @@ export default function IncidentDetailPage() {
         </div>
       </div>
 
-      {/* ── Main grid ── */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
 
         {/* ── LEFT COLUMN ── */}
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
 
-          {/* Incident Details card */}
           <div className="card">
             <h2 style={{ fontSize: 14, fontWeight: 600, marginBottom: 16 }}>Incident Details</h2>
             <div style={{ display: "flex", flexDirection: "column", gap: 12, fontSize: 13 }}>
@@ -304,7 +301,7 @@ export default function IncidentDetailPage() {
                   </div>
                 )}
 
-                {/* Emergency contacts */}
+                {/* Emergency contacts — now shows email instead of phone */}
                 {incident.user?.emergencyContacts?.length > 0 && (
                   <div style={{ marginTop: 12 }}>
                     <div style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 8 }}>EMERGENCY CONTACTS</div>
@@ -315,8 +312,14 @@ export default function IncidentDetailPage() {
                         background: "var(--bg-surface)",
                         borderRadius: 7, marginBottom: 6, fontSize: 12,
                       }}>
-                        <span style={{ fontWeight: 500 }}>{c.name} <span style={{ color: "var(--text-muted)", fontWeight: 400 }}>({c.relation})</span></span>
-                        <span style={{ color: "var(--info)" }}>{c.phone}</span>
+                        <span style={{ fontWeight: 500 }}>
+                          {c.name}
+                          {c.relation && (
+                            <span style={{ color: "var(--text-muted)", fontWeight: 400 }}> ({c.relation})</span>
+                          )}
+                        </span>
+                        {/* ← Fixed: was c.phone, now c.email */}
+                        <span style={{ color: "var(--info)" }}>{c.email}</span>
                       </div>
                     ))}
                   </div>
@@ -420,7 +423,6 @@ export default function IncidentDetailPage() {
         {/* ── RIGHT COLUMN ── */}
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
 
-          {/* Map */}
           {victimLoc ? (
             <div style={{ borderRadius: 12, overflow: "hidden", border: "1px solid var(--border)" }}>
               <div style={{
@@ -455,7 +457,6 @@ export default function IncidentDetailPage() {
             </div>
           )}
 
-          {/* Chat */}
           <IncidentChat
             incidentId={id}
             initialMessages={incident.messages || []}
