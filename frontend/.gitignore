@@ -26,3 +26,4 @@ dist-ssr
 
 frontend/
 .env
+.env.production
