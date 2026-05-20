@@ -2,9 +2,10 @@ const { Server } = require("socket.io");
 let io;
 
 const initSocket = (server) => {
+  const clientUrl = process.env.CLIENT_URL ? process.env.CLIENT_URL.replace(/\/$/, "") : "";
   io = new Server(server, {
     cors: {
-      origin: process.env.CLIENT_URL,
+      origin: clientUrl,
       methods: ["GET", "POST"],
     },
   });

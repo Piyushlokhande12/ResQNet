@@ -21,7 +21,8 @@ const server = http.createServer(app);
 
 initSocket(server);
 
-app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
+const clientUrl = process.env.CLIENT_URL ? process.env.CLIENT_URL.replace(/\/$/, "") : "";
+app.use(cors({ origin: clientUrl, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
